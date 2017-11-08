@@ -61,6 +61,6 @@ def get_assumption(assum):
 		ret += " "
 	return ret[::-1]
 
-print(get_assumption(generate_assumption()))
+print(generate_assumption())
 
 # ipdb.set_trace()
