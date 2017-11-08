@@ -5,7 +5,7 @@ import pickle
 
 all_letters = list('אבגדהוזחטיכלמנסעפצקרשת')
 crypt = list(range(1,23))
-orig = '11-12-05-06 11-10-09-08-07-06-05-04-03'
+orig = '11-12-05-06 7-6-5-1-8'  # '11-10-09-08-07-06-05-04-03'
 crypt_words = orig.split(" ")
 text = [[int(letter) for letter in word.split("-")] for word in crypt_words]
 
@@ -68,11 +68,14 @@ def get_assumption(assum):
 		for letter in word:
 			ret += assum[letter]
 		ret += " "
-	return ''.join(ret[::-1]).strip()
+	return ''.join(ret).strip()
 
+guesses = set()
 for i in range(1000000):
-	guess = get_assumption(generate_assumption())
-	if guess:
-		first_word = (guess.split()[1])
-		if first_word[::-1] in bible_words:
-			print(guess)
+	assum = generate_assumption()
+	guess = get_assumption(assum)
+	if not guess or str(assum) in guesses:
+		continue
+	if all(word in bible_words for word in guess.split()):
+		print(guess[::-1])
+		guesses.add(str(assum))
