@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 import ipdb
 from random import shuffle, sample
+import pickle
 
 all_letters = list('אבגדהוזחטיכלמנסעפצקרשת')
 crypt = list(range(1,23))
 orig = '11-12-05-06 11-10-09-08-07-06-05-04-03'
 crypt_words = orig.split(" ")
 text = [[int(letter) for letter in word.split("-")] for word in crypt_words]
+
+bible_words = pickle.load(open("words.pkl", "rb"))
 
 guesses = {
 	1: ['ח', 'ט', 'י', 'כ', 'ל', 'מ', 'ס', 'ע', 'פ', 'צ'],
@@ -33,6 +36,7 @@ guesses = {
 	22: [],
 }
 
+
 filled_guesses = dict()
 for letter, guess in guesses.items():
 	shuffle(all_letters)
@@ -40,6 +44,7 @@ for letter, guess in guesses.items():
 		filled_guesses[letter] = all_letters
 	else:
 		filled_guesses[letter] = guess
+
 
 def generate_assumption():
 	unguessed = set(all_letters)
@@ -53,21 +58,21 @@ def generate_assumption():
 		assum[letter] = guessed_letter
 	return assum
 
-
+# ipdb.set_trace()
 def get_assumption(assum):
 	"""assumption is an ordered list of the alphabeta so that 01 is the first item, 02 is the seconds etc."""
 	if not assum:
 		return
-	ret = ''
+	ret = []
 	for word in text:
 		for letter in word:
 			ret += assum[letter]
 		ret += " "
-	return ret[::-1]
+	return ''.join(ret[::-1]).strip()
 
-for i in range(1000):
+for i in range(1000000):
 	guess = get_assumption(generate_assumption())
 	if guess:
-		print(guess)
-
-# ipdb.set_trace()
+		first_word = (guess.split()[1])
+		if first_word[::-1] in bible_words:
+			print(guess)
