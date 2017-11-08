@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-from random import shuffle
+import ipdb
+from random import shuffle, sample
 
 all_letters = list('אבגדהוזחטיכלמנסעפצקרשת')
 crypt = list(range(1,23))
@@ -13,7 +14,7 @@ guesses = {
 	3: ['א', 'ב', 'ג'],
 	4: ['ש', 'ת', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט'],
 	5: ['כ', 'ל', 'מ', 'י', 'נ', 'ס'],
-	6: ['כ', 'ל', 'מ', 'ז', 'ח', 'ט', 'ב', 'ג', 'ד', 'ה', 'ק', 'ק', 'ש'],
+	6: ['כ', 'ל', 'מ', 'ז', 'ח', 'ט', 'ב', 'ג', 'ד', 'ה', 'ק', 'ש'],
 	7: ['ק', 'ר', 'ש', 'ג', 'ד', 'ה', 'ס', 'ע', 'פ', 'ז', 'ח', 'ט', 'ב'],
 	8: [],
 	9: [],
@@ -32,6 +33,24 @@ guesses = {
 	22: [],
 }
 
+filled_guesses = dict()
+for letter, guess in guesses.items():
+	shuffle(all_letters)
+	if guess == []:
+		filled_guesses[letter] = all_letters
+	else:
+		filled_guesses[letter] = guess
+
+def generate_assumption():
+	unguessed = set(all_letters)
+	assum = dict()
+	for letter, guess in filled_guesses.items():
+		possible_letters = unguessed.intersection(guess)
+		guessed_letter = sample(possible_letters, 1)[0]
+		possible_letters.remove(guessed_letter)
+		assum[letter] = guessed_letter
+	return assum
+
 
 def get_assumption(assum):
 	"""assumption is an ordered list of the alphabeta so that 01 is the first item, 02 is the seconds etc."""
@@ -42,4 +61,6 @@ def get_assumption(assum):
 		ret += " "
 	return ret[::-1]
 
-print(get_assumption(all_letters))
+print(get_assumption(generate_assumption()))
+
+# ipdb.set_trace()
